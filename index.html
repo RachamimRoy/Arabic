@@ -11,6 +11,7 @@
 <style>
 .retry-notice{margin:1px 4px 0;color:#b74638;font-size:13px;font-weight:700}
 .top{min-height:46px;margin-bottom:22px;direction:rtl}.header-home{font-size:34px;line-height:1;padding-bottom:5px}
+.home-feature{touch-action:pan-y;cursor:grab;user-select:none}.home-feature:active{cursor:grabbing}.list-head .header-home{flex:0 0 46px}
 .swipe-out-next{animation:cardOutNext .28s ease-in forwards}.swipe-in-next{animation:cardInNext .3s ease-out both}.swipe-out-previous{animation:cardOutPrevious .28s ease-in forwards}.swipe-in-previous{animation:cardInPrevious .3s ease-out both}
 @keyframes cardOutNext{to{opacity:0;transform:translateX(-115%) rotate(-2deg)}}@keyframes cardInNext{from{opacity:0;transform:translateX(75px)}to{opacity:1;transform:translateX(0)}}@keyframes cardOutPrevious{to{opacity:0;transform:translateX(115%) rotate(2deg)}}@keyframes cardInPrevious{from{opacity:0;transform:translateX(-75px)}to{opacity:1;transform:translateX(0)}}
 @media(prefers-reduced-motion:reduce){.swipe-out-next,.swipe-in-next,.swipe-out-previous,.swipe-in-previous{animation-duration:.01ms!important}}
@@ -24,16 +25,15 @@
   </header>
 
   <section id="homePage" class="home-page">
-    <div class="card home-feature">
-      <div class="home-kicker">מילה מהמאגר</div>
+    <div id="featuredCard" class="card home-feature" tabindex="0" aria-label="מילה מהמאגר. החליקו ימינה או שמאלה למעבר בין מילים">
       <div class="word-line"><h2 id="featuredWord" class="word"></h2><span id="featuredTranslit" class="translit"></span></div>
       <p id="featuredMeta" class="meta"></p>
       <div class="example"><p id="featuredSentence" class="sentence"></p></div>
     </div>
     <div class="dashboard-list">
-      <button class="dashboard-row" type="button" data-home-list="all"><span><strong>כל המילים</strong><small>אוצר המילים המלא</small></span><span id="allRing" class="progress-ring"><b id="homeAllCount">0</b></span></button>
-      <button class="dashboard-row" type="button" data-home-list="unseen"><span><strong>עוד לא למדתי</strong><small>מילים שעדיין לא הופיעו בתרגול</small></span><span id="unseenRing" class="progress-ring"><b id="homeUnseenCount">0</b></span></button>
-      <button class="dashboard-row" type="button" data-home-list="retry"><span><strong>מילים לחזרה</strong><small>מילים שדורשות תרגול נוסף</small></span><span id="retryRing" class="progress-ring"><b id="homeRetryCount">0</b></span></button>
+      <button class="dashboard-row" type="button" data-home-list="all"><span><strong>כל המילים</strong></span><span id="allRing" class="progress-ring"><b id="homeAllCount">0</b></span></button>
+      <button class="dashboard-row" type="button" data-home-list="unseen"><span><strong>עוד לא למדתי</strong></span><span id="unseenRing" class="progress-ring"><b id="homeUnseenCount">0</b></span></button>
+      <button class="dashboard-row" type="button" data-home-list="retry"><span><strong>מילים לחזרה</strong></span><span id="retryRing" class="progress-ring"><b id="homeRetryCount">0</b></span></button>
     </div>
     <button id="practiceButton" class="primary home-practice" type="button">תרגול</button>
   </section>
@@ -62,7 +62,7 @@
   </section>
 
   <section id="listPage" class="card" hidden>
-    <div class="list-head"><h2 id="listTitle" style="margin:0"></h2><button id="listBack" class="reset" type="button">חזרה</button></div><div id="wordList" class="word-list"></div>
+    <div class="list-head"><h2 id="listTitle" style="margin:0"></h2><button id="listBack" class="icon-button header-home" type="button" title="חזרה" aria-label="חזרה">‹</button></div><div id="wordList" class="word-list"></div>
   </section>
 </main>
 
@@ -86,7 +86,7 @@ const API_URL='https://arabicapptest.roy-rachamim.workers.dev';
 const STORAGE_KEY='shway-shway-session-progress-v1';
 const LEGACY_KEYS=['shway-shway-progress-v2','shway-shway-progress-v1'];
 const SHEET_TABS=['שריף'];
-let items=[],order=[],index=0,sessionNumber=0,sessionResults={},progress={},shuffleOn=true,transitioning=false,activeView='home',listReturnView='home',featuredItem=null;
+let items=[],order=[],index=0,sessionNumber=0,sessionResults={},progress={},shuffleOn=true,transitioning=false,activeView='home',listReturnView='home',featuredIndex=null,featuredTransitioning=false,featurePointerStart=null;
 const by=id=>document.getElementById(id);
 const form=by('form'),feedback=by('feedback');
 
@@ -109,7 +109,9 @@ function getStats(){return{all:items.length,known:items.filter(q=>stateOf(q)==='
 function setRing(id,count,total,color){const ring=by(id);ring.style.setProperty('--p',total?Math.round(count/total*100):0);ring.style.setProperty('--ring',color)}
 function updateCounts(){const s=getStats();by('totalCount').textContent=s.all;by('knownCount').textContent=s.known;by('unseenCount').textContent=s.unseen;by('retryCount').textContent=s.retry;by('homeAllCount').textContent=s.all;by('homeUnseenCount').textContent=s.unseen;by('homeRetryCount').textContent=s.retry;setRing('allRing',s.known,s.all,'#368b69');setRing('unseenRing',s.unseen,s.all,'#c7a12d');setRing('retryRing',s.retry,s.all,'#dc4a39')}
 
-function renderHome(){updateCounts();if(!featuredItem||!items.includes(featuredItem))featuredItem=items[Math.floor(Math.random()*items.length)];const q=featuredItem;if(!q)return;by('featuredWord').textContent=q.w;by('featuredTranslit').textContent='('+q.tr+') — '+q.m.join(' / ');by('featuredMeta').textContent=q.f;by('featuredSentence').innerHTML=q.s?highlightWord(q):'למילה הזאת עדיין לא נוסף משפט לדוגמה בגיליון.'}
+function renderFeatured(){if(featuredIndex===null||!items[featuredIndex])featuredIndex=Math.floor(Math.random()*items.length);const q=items[featuredIndex];if(!q)return;by('featuredWord').textContent=q.w;by('featuredTranslit').textContent='('+q.tr+') — '+q.m.join(' / ');by('featuredMeta').textContent=q.f;by('featuredSentence').innerHTML=q.s?highlightWord(q):'למילה הזאת עדיין לא נוסף משפט לדוגמה בגיליון.'}
+function renderHome(){updateCounts();renderFeatured()}
+function changeFeatured(delta){if(activeView!=='home'||featuredTransitioning||items.length<2)return;featuredTransitioning=true;const card=by('featuredCard'),outClass=delta>0?'swipe-out-next':'swipe-out-previous',inClass=delta>0?'swipe-in-next':'swipe-in-previous';card.classList.add(outClass);setTimeout(()=>{card.classList.remove(outClass);featuredIndex=(featuredIndex+delta+items.length)%items.length;renderFeatured();card.classList.add(inClass);setTimeout(()=>{card.classList.remove(inClass);featuredTransitioning=false},300)},280)}
 function showHome(){closeMenu();activeView='home';by('headerHomeButton').hidden=true;by('homePage').hidden=false;by('quizPage').hidden=true;by('summaryPage').hidden=true;by('listPage').hidden=true;renderHome()}
 
 function buildSession(){sessionNumber++;sessionResults={};index=0;const eligible=items.filter(q=>{const p=progress[itemKey(q)];return p?.status==='retry'&&(p.dueSet||0)<=sessionNumber});const reviewTarget=Math.min(eligible.length,2+Math.floor(Math.random()*3));const reviews=shuffled(eligible).slice(0,reviewTarget);const used=new Set(reviews.map(itemKey));const unseen=shuffled(items.filter(q=>stateOf(q)==='unseen'&&!used.has(itemKey(q))));const known=shuffled(items.filter(q=>stateOf(q)==='known'&&!used.has(itemKey(q))));const waiting=shuffled(items.filter(q=>stateOf(q)==='retry'&&!used.has(itemKey(q))));order=[...reviews,...unseen,...known,...waiting].slice(0,10);if(shuffleOn)order=shuffled(order);saveState();showQuiz();draw()}
@@ -135,10 +137,14 @@ function showQuiz(){activeView='quiz';by('headerHomeButton').hidden=false;by('ho
 function openMenu(){updateCounts();by('drawer').hidden=false;by('drawerOverlay').hidden=false}
 function closeMenu(){by('drawer').hidden=true;by('drawerOverlay').hidden=true}
 function showList(type){listReturnView=activeView==='list'?listReturnView:activeView;activeView='list';closeMenu();by('headerHomeButton').hidden=true;const list=type==='all'?items:items.filter(q=>stateOf(q)===type),titles={all:'כל המילים',known:'מילים שאני יודע',unseen:'עוד לא למדתי',retry:'מילים לחזרה'};by('listTitle').textContent=titles[type];by('wordList').innerHTML=list.length?list.map(q=>{const p=progress[itemKey(q)];return '<div class="word-row"><div><div class="list-line"><span class="list-word">'+q.w+'</span><span class="muted">('+q.tr+') — '+q.m.join(' / ')+'</span></div><div class="muted" style="font-size:13px;margin-top:5px">'+q.f+'</div>'+(q.s?'<div class="list-sentence">'+highlightWord(q)+'</div><div class="muted" style="font-size:15px;margin-top:5px">'+highlightHebrew(q)+'</div>':'')+'</div>'+(type==='retry'?dots(p?.successes||0):'')+'</div>'}).join(''):'<div class="empty">הרשימה עדיין ריקה</div>';by('homePage').hidden=true;by('quizPage').hidden=true;by('summaryPage').hidden=true;by('listPage').hidden=false}
-function resetAll(){if(!confirm('למחוק את כל ההתקדמות? המילים עצמן לא יימחקו.'))return;progress={};sessionResults={};order=[];index=0;sessionNumber=0;localStorage.removeItem(STORAGE_KEY);for(const key of LEGACY_KEYS)localStorage.removeItem(key);featuredItem=null;showHome()}
+function resetAll(){if(!confirm('למחוק את כל ההתקדמות? המילים עצמן לא יימחקו.'))return;progress={};sessionResults={};order=[];index=0;sessionNumber=0;localStorage.removeItem(STORAGE_KEY);for(const key of LEGACY_KEYS)localStorage.removeItem(key);featuredIndex=null;showHome()}
 
 by('checkButton').addEventListener('pointerdown',e=>{e.preventDefault();if(!by('checkButton').disabled)form.requestSubmit()});by('checkButton').addEventListener('click',()=>{if(!by('checkButton').disabled)form.requestSubmit()});by('nextButton').addEventListener('click',nextWord);by('previousButton').addEventListener('click',previousWord);by('continueButton').addEventListener('click',buildSession);by('practiceButton').addEventListener('click',()=>{if(order.length&&Object.keys(sessionResults).length<order.length){showQuiz();draw()}else buildSession()});by('homeButton').addEventListener('click',showHome);by('menuButton').addEventListener('click',openMenu);by('closeMenu').addEventListener('click',closeMenu);by('drawerOverlay').addEventListener('click',closeMenu);by('resetProgress').addEventListener('click',resetAll);by('listBack').addEventListener('click',()=>{if(listReturnView==='home')showHome();else if(listReturnView==='summary')showSummary();else{showQuiz();draw()}});document.querySelectorAll('[data-list]').forEach(b=>b.addEventListener('click',()=>showList(b.dataset.list)));document.querySelectorAll('[data-home-list]').forEach(b=>b.addEventListener('click',()=>showList(b.dataset.homeList)));by('shuffleButton').addEventListener('click',()=>{shuffleOn=!shuffleOn;by('shuffleButton').classList.toggle('active',shuffleOn);by('shuffleButton').querySelector('.menu-icon').textContent=shuffleOn?'🔀':'⇥';saveState()});by('word').addEventListener('focus',()=>{if(window.innerWidth<=560)setTimeout(()=>by('wordCard').scrollIntoView({behavior:'smooth',block:'start'}),280)});
 
+by('featuredCard').addEventListener('pointerdown',e=>{if(!e.isPrimary)return;featurePointerStart={x:e.clientX,y:e.clientY}});
+by('featuredCard').addEventListener('pointerup',e=>{if(!featurePointerStart)return;const dx=e.clientX-featurePointerStart.x,dy=e.clientY-featurePointerStart.y;featurePointerStart=null;if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.2)changeFeatured(dx<0?1:-1)});
+by('featuredCard').addEventListener('pointercancel',()=>{featurePointerStart=null});
+by('featuredCard').addEventListener('keydown',e=>{if(e.key==='ArrowLeft'){e.preventDefault();changeFeatured(1)}else if(e.key==='ArrowRight'){e.preventDefault();changeFeatured(-1)}});
 by('headerHomeButton').addEventListener('click',showHome);
 
 (async()=>{try{await loadVocabulary();loadState();by('shuffleButton').classList.toggle('active',shuffleOn);by('shuffleButton').querySelector('.menu-icon').textContent=shuffleOn?'🔀':'⇥';showHome()}catch(error){console.error(error);by('featuredSentence').textContent='לא הצלחנו לטעון את אוצר המילים: '+error.message}})();
