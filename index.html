@@ -26,6 +26,34 @@
 .cloud-tools{display:flex;gap:7px;margin-top:10px}.cloud-tools button{flex:1;border:1px solid #cfc8b8;border-radius:10px;background:#fff;padding:8px;font-weight:700;cursor:pointer}.cloud-code{direction:ltr;font-family:monospace;font-size:12px;overflow-wrap:anywhere;margin-top:6px}.cloud-status{font-size:12px;color:#706b62;margin-top:7px}.cloud-status.error{color:#c34e40}
 .google-profile{display:flex;align-items:center;gap:10px;margin-bottom:10px}.google-profile img{width:38px;height:38px;border-radius:50%;object-fit:cover}.google-profile-copy{display:grid;gap:2px;min-width:0}.google-profile-copy small{overflow:hidden;text-overflow:ellipsis}.google-signout{border:0;background:transparent;color:#706b62;text-decoration:underline;padding:7px 0;cursor:pointer}.google-login{margin-bottom:10px;min-height:40px}
 .summary-translation{font-size:15px;margin-top:4px;line-height:1.45}.list-practice{width:100%;margin:0 0 16px}
+
+/* Light visual system */
+:root{--blue:#1cb0f6;--blue-shadow:#168fca;--green:#14bd78;--yellow:#ffb800;--red:#ff452f;--line:#e8e8e8;--shadow:#e5e5e5;--soft:#f7f7f7;--text:#242424;--muted:#747474}
+body{background:#fff;color:var(--text)}
+.muted,.translit,.meta,.lesson-meta,.cloud-status{color:var(--muted)}
+.card{background:#fff;border:2px solid var(--line);border-radius:11px;box-shadow:0 4px 0 var(--shadow)}
+.lesson-card,.dashboard-row{background:#fff;border:2px solid var(--line);border-radius:11px;box-shadow:0 3px 0 var(--shadow)}
+.word-row,.summary-row{background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 2px 0 var(--shadow)}
+.icon-button,.reset{background:#fff;border:2px solid var(--line);border-radius:10px;box-shadow:0 3px 0 var(--shadow)}
+.primary,.check{color:#fff;background:var(--blue);border:0;border-radius:9px;box-shadow:0 5px 0 var(--blue-shadow)}
+.primary:active,.check:active{transform:translateY(3px);box-shadow:0 2px 0 var(--blue-shadow)}
+.nav-button{background:#fff;border:2px solid var(--line);border-radius:9px;box-shadow:0 3px 0 var(--shadow)}
+.nav-button:last-child{color:#fff;background:var(--blue);border-color:var(--blue);box-shadow:0 4px 0 var(--blue-shadow)}
+input{background:#fff;border:2px solid var(--line);border-radius:9px;box-shadow:0 2px 0 var(--shadow);outline-color:var(--blue)}
+.feedback{border-color:var(--line)}
+.answer-state{border-radius:10px;box-shadow:0 2px 0 var(--shadow)}
+.wrong-answer{border-color:var(--red)}.wrong-answer .answer-icon,.wrong-answer small,.bad,.retry-notice{color:var(--red)}
+.correct-answer{border-color:var(--green)}.correct-answer .answer-icon,.correct-answer small,.good{color:var(--green)}
+.sentence-translation{border-color:#d8f2e7}.target{color:var(--red)}
+.progress-ring{background:conic-gradient(var(--ring) calc(var(--p)*1%),var(--line) 0)}.progress-ring:after{background:#fff}
+.progress-segment{background:var(--line)}.progress-segment.correct{background:var(--green)}.progress-segment.wrong,.progress-segment.skipped{background:var(--red)}
+.progress-segment.frontier{background:#fff}.progress-segment.current{box-shadow:0 0 0 2px #555}.progress-segment.correct.current{background:var(--green)}.progress-segment.wrong.current,.progress-segment.skipped.current{background:var(--red)}
+.lesson-progress{background:var(--line)}.lesson-progress .known{background:var(--green)}.lesson-progress .retry{background:var(--red)}
+.drawer{background:#fff;border-left:1px solid var(--line)}.drawer-overlay{background:rgba(36,36,36,.35)}
+.user-box{background:var(--soft);border-radius:11px}.menu-row{border:1px solid var(--line);border-radius:10px;box-shadow:0 2px 0 var(--shadow)}.menu-row.active .menu-icon{color:var(--green)}
+.cloud-tools button{border-color:var(--line);border-radius:8px;box-shadow:0 2px 0 var(--shadow)}
+.empty{background:var(--soft);border-radius:10px}.success-pop{background:rgba(255,255,255,.92);border-radius:9px}.success-check{background:var(--green)}
+@media(max-width:560px){.card{box-shadow:0 4px 0 var(--shadow)}.dashboard-row,.lesson-card{border-radius:10px}.icon-button{border-radius:9px}}
 </style>
 </head>
 <body>
@@ -142,7 +170,7 @@ function getStats(list=items){return{all:list.length,known:list.filter(q=>stateO
 function setRing(id,count,total,color){const ring=by(id);ring.style.setProperty('--p',total?Math.round(count/total*100):0);ring.style.setProperty('--ring',color)}
 function lessonItems(key=selectedLesson){return key==='all'?items:items.filter(q=>q.lesson===key)}
 function lessonTitle(key=selectedLesson){return key==='all'?'כל המילים':lessons.find(l=>l.sheet===key)?.title||key}
-function updateCounts(){const all=getStats(),scope=getStats(lessonItems());by('totalCount').textContent=all.all;by('knownCount').textContent=all.known;by('unseenCount').textContent=all.unseen;by('retryCount').textContent=all.retry;by('homeAllCount').textContent=scope.all;by('homeUnseenCount').textContent=scope.unseen;by('homeRetryCount').textContent=scope.retry;setRing('allRing',scope.known,scope.all,'#368b69');setRing('unseenRing',scope.unseen,scope.all,'#c7a12d');setRing('retryRing',scope.retry,scope.all,'#dc4a39')}
+function updateCounts(){const all=getStats(),scope=getStats(lessonItems());by('totalCount').textContent=all.all;by('knownCount').textContent=all.known;by('unseenCount').textContent=all.unseen;by('retryCount').textContent=all.retry;by('homeAllCount').textContent=scope.all;by('homeUnseenCount').textContent=scope.unseen;by('homeRetryCount').textContent=scope.retry;setRing('allRing',scope.known,scope.all,'#14bd78');setRing('unseenRing',scope.unseen,scope.all,'#ffb800');setRing('retryRing',scope.retry,scope.all,'#ff452f')}
 
 function renderLessonList(){by('lessonList').innerHTML=lessons.map(lesson=>{const list=lessonItems(lesson.sheet),s=getStats(list),knownPct=s.all?Math.round(s.known/s.all*100):0,retryPct=s.all?Math.round(s.retry/s.all*100):0;return '<button class="lesson-card" type="button" data-lesson="'+lesson.sheet.replace(/"/g,'&quot;')+'"><span class="lesson-copy"><strong>'+lesson.title+'</strong><span class="lesson-progress"><i class="known" style="width:'+knownPct+'%"></i><i class="retry" style="width:'+retryPct+'%"></i></span><span class="lesson-meta"><span>'+s.all+' מילים</span><span>'+s.retry+' לחזרה</span><span>'+knownPct+'% מילים ידועות</span></span></span><span class="lesson-arrow">‹</span></button>'}).join('');by('lessonList').querySelectorAll('[data-lesson]').forEach(button=>button.addEventListener('click',()=>showLesson(button.dataset.lesson)))}
 function renderFeatured(){const pool=lessonItems();if(!pool.length)return;if(featuredIndex===null||featuredIndex>=pool.length)featuredIndex=Math.floor(Math.random()*pool.length);const q=pool[featuredIndex];by('featuredWord').textContent=q.w;by('featuredTranslit').textContent='('+q.tr+') — '+q.m.join(' / ');by('featuredMeta').textContent=q.f;by('featuredSentence').innerHTML=q.s?highlightWord(q):'למילה הזאת עדיין לא נוסף משפט לדוגמה בגיליון.'}
