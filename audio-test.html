@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Arabic App · ניסוי אודיו</title>
+  <style>
+    :root{--blue:#1cb0f6;--blue-shadow:#168bc4;--line:#e3e3e3;--text:#252525;--muted:#777;--red:#ff452f}
+    *{box-sizing:border-box}body{margin:0;background:#fff;color:var(--text);font-family:Arial,sans-serif}
+    main{width:min(720px,calc(100% - 28px));margin:28px auto 60px}h1{margin:0 0 5px;font-size:28px}.intro{color:var(--muted);margin:0 0 22px;line-height:1.5}
+    .list{display:grid;gap:12px}.card{border:1px solid var(--line);border-radius:12px;padding:17px;box-shadow:0 3px 0 #d9d9d9}
+    .word-line{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}.arabic{font-size:36px;font-weight:700}.meaning{color:var(--muted)}
+    .audio-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border-top:1px solid var(--line);padding-top:11px;margin-top:11px}.sentence{font-size:20px;line-height:1.6;direction:rtl}
+    button{min-width:108px;border:0;border-radius:9px;padding:11px 14px;background:var(--blue);color:#fff;font-weight:700;font-size:15px;box-shadow:0 4px 0 var(--blue-shadow);cursor:pointer}
+    button:disabled{background:#c8cbce;color:#5f6367;box-shadow:0 4px 0 #a7aaad;cursor:not-allowed}.download{display:inline-block;margin-top:8px;color:#555;font-size:13px}
+    .status{position:sticky;bottom:12px;margin-top:18px;padding:11px 14px;border-radius:9px;background:#f3f3f3;color:#555;text-align:center}.status.error{color:#b83224;background:#fff0ed}
+    .dots{display:inline-flex;direction:ltr;gap:3px;margin-inline-start:5px}.dots i{width:5px;height:5px;border-radius:50%;background:currentColor;animation:dot 1s ease-in-out infinite}.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}@keyframes dot{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+    @media(max-width:560px){main{margin-top:18px}.audio-row{grid-template-columns:1fr}.audio-row button{width:100%}.arabic{font-size:32px}}
+  </style>
+</head>
+<body>
+<main>
+  <h1>ניסוי הקראה</h1>
+  <p class="intro">חמש מילים וחמישה משפטים מ״רן – שיעור 1״. ההקראה נוצרת ב־AI בפעם הראשונה שלוחצים בכל סשן, ולאחר מכן מתנגנת מהזיכרון.</p>
+  <section id="list" class="list"></section>
+  <div id="status" class="status">מוכן לניסוי · טרם נוצר אודיו</div>
+</main>
+<script>
+const API_URL='https://arabicapptest.roy-rachamim.workers.dev';
+const samples=[
+  {id:'ran1_0001',word:'جُزْء',meaning:'חלק',sentence:'هَادَا جُزْء مُهِمّ مِنَ الدَّرْس.'},
+  {id:'ran1_0002',word:'اِسْتِمْرَار',meaning:'המשך',sentence:'اِسْتِمْرَار الشُّغْل بِدُّه صَبْر.'},
+  {id:'ran1_0003',word:'إِبْدَاع',meaning:'יצירתיות',sentence:'عِنْدَهَا إِبْدَاع بِالتَّصْمِيم.'},
+  {id:'ran1_0004',word:'حَادِث طُرُق',meaning:'תאונת דרכים',sentence:'صَار حَادِث طُرُق قُرْب البَلَد.'},
+  {id:'ran1_0005',word:'سَيَّارَة إِسْعَاف',meaning:'אמבולנס',sentence:'وِصْلِت سَيَّارَة إِسْعَاف بِسُرْعَة.'}
+];
+const audioCache=new Map();
+const list=document.getElementById('list'),status=document.getElementById('status');
+list.innerHTML=samples.map(sample=>`<article class="card"><div class="word-line"><span class="arabic">${sample.word}</span><span class="meaning">— ${sample.meaning}</span></div><div class="audio-row"><span class="sentence">${sample.word}</span><span><button type="button" data-text="${sample.word}" data-name="${sample.id}-word.mp3">🔊 השמעת מילה</button><a class="download" hidden>הורדת MP3</a></span></div><div class="audio-row"><span class="sentence">${sample.sentence}</span><span><button type="button" data-text="${sample.sentence}" data-name="${sample.id}-sentence.mp3">🔊 השמעת משפט</button><a class="download" hidden>הורדת MP3</a></span></div></article>`).join('');
+function setStatus(message,error=false){status.textContent=message;status.classList.toggle('error',error)}
+async function getAudio(text){if(audioCache.has(text))return audioCache.get(text);const response=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'pilot-speech',text})});const data=await response.json();if(!response.ok)throw new Error(data.error||'יצירת האודיו נכשלה');const bytes=Uint8Array.from(atob(data.audioBase64),char=>char.charCodeAt(0));const url=URL.createObjectURL(new Blob([bytes],{type:data.mimeType||'audio/mpeg'}));audioCache.set(text,url);return url}
+list.addEventListener('click',async event=>{const button=event.target.closest('button[data-text]');if(!button||button.disabled)return;const original=button.textContent;button.disabled=true;button.innerHTML='מייצר<span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>';setStatus('מייצר אודיו באמצעות AI…');try{const url=await getAudio(button.dataset.text);const link=button.parentElement.querySelector('.download');link.href=url;link.download=button.dataset.name;link.hidden=false;await new Audio(url).play();setStatus('האודיו מוכן ומתנגן. לחיצה נוספת לא תיצור אותו שוב בסשן הזה.')}catch(error){console.error(error);setStatus(error.message,true)}finally{button.disabled=false;button.textContent=original}});
+</script>
+</body>
+</html>
