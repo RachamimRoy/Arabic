@@ -151,7 +151,7 @@ body.menu-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}.drawer{
     <button class="menu-row" data-list="retry"><span>מילים לחזרה</span><strong id="retryCount">0</strong></button>
   </div>
   <button id="resetProgress" class="menu-row danger" type="button"><span>איפוס התקדמות</span><strong>↻</strong></button>
-  <p id="appVersion" class="app-version">Shway Shway v18.2 · global tags & menu fixes</p>
+  <p id="appVersion" class="app-version">Shway Shway v18.3 · Sherif audio</p>
 </aside>
 
 <script>
@@ -177,7 +177,7 @@ function itemKey(q){return q.id||q.w}
 function stopAudio(){audioRun++;if(audioPauseTimer){clearTimeout(audioPauseTimer);audioPauseTimer=null}if(activeAudio){activeAudio.pause();activeAudio.currentTime=0}if(activeAudioButton){activeAudioButton.classList.remove('is-playing');restoreAudioIcon(activeAudioButton)}activeAudio=null;activeAudioButton=null}
 function audioPath(q,type){return 'audio/'+encodeURIComponent(itemKey(q))+'-'+type+'.mp3'}
 function playOneFile(q,type,run){return new Promise((resolve,reject)=>{if(run!==audioRun)return reject(new Error('stopped'));const audio=new Audio(audioPath(q,type));activeAudio=audio;audio.addEventListener('ended',()=>resolve(),{once:true});audio.addEventListener('error',()=>reject(new Error('missing '+type)),{once:true});audio.play().catch(reject)})}
-async function playWordAndSentence(q,button){if(!q||!button||button.disabled)return;if(activeAudioButton===button){stopAudio();return}stopAudio();const run=audioRun;activeAudioButton=button;button.classList.remove('is-error');button.classList.add('is-playing');showPauseIcon(button);try{await playOneFile(q,'word',run);if(run!==audioRun)return;await new Promise(resolve=>{audioPauseTimer=setTimeout(resolve,450)});audioPauseTimer=null;if(run!==audioRun)return;if(q.s)await playOneFile(q,'sentence',run);if(run===audioRun)stopAudio()}catch(error){if(run!==audioRun)return;stopAudio();button.classList.add('is-error');button.title='חסר קובץ אודיו למילה או למשפט';setTimeout(()=>{button.classList.remove('is-error');restoreAudioIcon(button);button.title='השמעת המילה והמשפט'},1800)}}
+async function playWordAndSentence(q,button){if(!q||!button||button.disabled)return;if(activeAudioButton===button){stopAudio();return}stopAudio();const run=audioRun;activeAudioButton=button;button.classList.remove('is-error');button.classList.add('is-playing');showPauseIcon(button);try{await playOneFile(q,'word',run);if(run!==audioRun)return;await new Promise(resolve=>{audioPauseTimer=setTimeout(resolve,300)});audioPauseTimer=null;if(run!==audioRun)return;if(q.s)await playOneFile(q,'sentence',run);if(run===audioRun)stopAudio()}catch(error){if(run!==audioRun)return;stopAudio();button.classList.add('is-error');button.title='חסר קובץ אודיו למילה או למשפט';setTimeout(()=>{button.classList.remove('is-error');restoreAudioIcon(button);button.title='השמעת המילה והמשפט'},1800)}}
 function setAudioButton(q,prefix){const button=by(prefix+'Audio');if(button){restoreAudioIcon(button);button.disabled=!q?.id;button.dataset.itemId=itemKey(q)}}
 function metaValues(value){return String(value||'').split('·').map(v=>v.trim()).filter(Boolean)}
 function escapeHtml(value){return String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
