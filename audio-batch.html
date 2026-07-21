@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Shway Shway · יצירת אודיו</title>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <style>
+    :root{--blue:#1cb0f6;--blue2:#168bc4;--green:#58cc02;--red:#ff4b4b;--ink:#292929;--muted:#777;--line:#e6e6e6;--soft:#f7f7f7}
+    *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;color:var(--ink);background:#fff}main{width:min(760px,calc(100% - 28px));margin:28px auto 60px}
+    h1{margin:0 0 6px;font-size:29px}.intro{margin:0 0 20px;color:var(--muted);line-height:1.5}.panel{border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 4px 0 #ddd;margin-bottom:16px}
+    .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{background:var(--soft);border-radius:10px;padding:12px;text-align:center}.stat strong{display:block;font-size:24px}.stat span{font-size:13px;color:var(--muted)}
+    .lessons{display:grid;gap:8px;margin-top:15px;max-height:240px;overflow:auto}.lesson{display:flex;align-items:center;gap:9px;padding:9px 10px;border:1px solid var(--line);border-radius:9px}.lesson small{color:var(--muted);margin-inline-start:auto}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}button{border:0;border-radius:9px;padding:12px 17px;background:var(--blue);color:#fff;font-weight:700;font-size:15px;box-shadow:0 4px 0 var(--blue2);cursor:pointer}button.secondary{background:#777;box-shadow:0 4px 0 #555}button.green{background:var(--green);box-shadow:0 4px 0 #46a302}button:disabled{background:#ccc;box-shadow:0 4px 0 #aaa;color:#666;cursor:not-allowed}
+    .progress{height:18px;border-radius:999px;background:#eee;overflow:hidden;margin:16px 0 8px}.bar{height:100%;width:0;background:var(--green);transition:width .25s}.status{color:var(--muted);line-height:1.5}.current{font-size:21px;direction:rtl;margin-top:11px;min-height:34px}.errors{color:#b62f2f;margin-top:10px;white-space:pre-wrap;font-size:13px;max-height:150px;overflow:auto}.note{font-size:13px;color:var(--muted);line-height:1.5;margin-top:14px}
+    @media(max-width:560px){main{margin-top:18px}.summary{grid-template-columns:1fr}.actions button{width:100%}}
+  </style>
+</head>
+<body>
+<main>
+  <h1>יצירת אודיו לכל המאגר</h1>
+  <p class="intro">הכלי קורא את השיעורים הפעילים מהגיליון, מייצר MP3 למילה ולמשפט, ומרכז הכול בקובץ ZIP אחד.</p>
+  <section class="panel">
+    <div class="summary">
+      <div class="stat"><strong id="wordCount">—</strong><span>מילים</span></div>
+      <div class="stat"><strong id="fileCount">—</strong><span>קובצי אודיו</span></div>
+      <div class="stat"><strong id="doneCount">0</strong><span>נוצרו</span></div>
+    </div>
+    <div id="lessons" class="lessons"><span class="status">טוען שיעורים מהגיליון…</span></div>
+    <div class="actions">
+      <button id="start" disabled>התחלת יצירה</button>
+      <button id="pause" class="secondary" disabled>השהיה</button>
+      <button id="download" class="green" disabled>הורדת ZIP</button>
+    </div>
+    <p class="note">מומלץ להשאיר את הלשונית פתוחה עד לסיום. ההפקה נעשית ברצף כדי לשמור על יציבות ולא להעמיס על השירות.</p>
+  </section>
+  <section class="panel">
+    <div class="progress"><div id="bar" class="bar"></div></div>
+    <div id="status" class="status">ממתין לבחירת שיעורים</div>
+    <div id="current" class="current"></div>
+    <div id="errors" class="errors"></div>
+  </section>
+</main>
+<script>
+const API_URL='https://arabicapptest.roy-rachamim.workers.dev';
+const state={lessons:[],items:[],queue:[],files:new Map(),failures:[],running:false,paused:false,processed:0};
+const el=id=>document.getElementById(id);
+
+function parseCsv(text){const rows=[];let row=[],cell='',quoted=false;for(let i=0;i<text.length;i++){const c=text[i],n=text[i+1];if(c==='"'&&quoted&&n==='"'){cell+='"';i++}else if(c==='"')quoted=!quoted;else if(c===','&&!quoted){row.push(cell);cell=''}else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&n==='\n')i++;row.push(cell);if(row.some(v=>v!==''))rows.push(row);row=[];cell=''}else cell+=c}row.push(cell);if(row.some(v=>v!==''))rows.push(row);return rows}
+function columns(rows){const h=(rows[0]||[]).map(v=>v.trim().toLowerCase());return name=>h.indexOf(name.toLowerCase())}
+function active(value){return !['FALSE','0','NO'].includes(String(value||'').trim().toUpperCase())}
+function safeName(id){return String(id).replace(/[^a-zA-Z0-9_-]/g,'_')}
+function updateCounts(){const selected=new Set([...document.querySelectorAll('input[data-sheet]:checked')].map(x=>x.dataset.sheet));const items=state.items.filter(x=>selected.has(x.sheet));el('wordCount').textContent=items.length;el('fileCount').textContent=items.reduce((n,x)=>n+1+(x.sentence?1:0),0);el('start').disabled=!items.length||state.running}
+function setProgress(){const total=state.queue.length+state.processed;el('doneCount').textContent=state.files.size;el('bar').style.width=total?`${Math.round(state.processed/total*100)}%`:'0%'}
+
+async function load(){
+  try{
+    const lessonResponse=await fetch(`${API_URL}?action=lessons`,{cache:'no-store'});if(!lessonResponse.ok)throw new Error('לא הצלחנו לקרוא את רשימת השיעורים');
+    const lessonRows=parseCsv(await lessonResponse.text()),col=columns(lessonRows);
+    state.lessons=lessonRows.slice(1).map(r=>({sheet:String(r[col('Sheet')]||'').trim(),title:String(r[col('Title')]||'').trim(),enabled:active(r[col('Active')])})).filter(x=>x.sheet&&x.enabled);
+    const groups=await Promise.all(state.lessons.map(async lesson=>{
+      const response=await fetch(`${API_URL}?action=vocabulary&sheet=${encodeURIComponent(lesson.sheet)}`,{cache:'no-store'});if(!response.ok)throw new Error(`לא הצלחנו לקרוא את ${lesson.title}`);
+      const rows=parseCsv(await response.text()),c=columns(rows);
+      return rows.slice(1).map(r=>({sheet:lesson.sheet,id:String(r[c('ID')]||'').trim(),word:String(r[c('Arabic')]||'').trim(),sentence:c('Example')<0?'':String(r[c('Example')]||'').trim(),enabled:c('Active')<0||active(r[c('Active')])})).filter(x=>x.id&&x.word&&x.enabled);
+    }));
+    state.items=groups.flat();
+    el('lessons').innerHTML=state.lessons.map(lesson=>{const count=state.items.filter(x=>x.sheet===lesson.sheet).length;return `<label class="lesson"><input type="checkbox" data-sheet="${lesson.sheet}" checked><span>${lesson.title}</span><small>${count} מילים</small></label>`}).join('');
+    document.querySelectorAll('input[data-sheet]').forEach(x=>x.addEventListener('change',updateCounts));updateCounts();el('status').textContent='מוכן ליצירה';
+  }catch(error){el('status').textContent=error.message;el('errors').textContent='בדוק שה־Worker החדש נפרס ושעמוד זה נפתח דרך GitHub Pages.'}
+}
+
+async function requestAudio(job){
+  const response=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'vocabulary-speech',sheet:job.sheet,id:job.id,kind:job.kind})});
+  const data=await response.json();if(!response.ok)throw new Error(data.error||'יצירת האודיו נכשלה');
+  const bytes=Uint8Array.from(atob(data.audioBase64),c=>c.charCodeAt(0));state.files.set(`audio/${safeName(job.id)}-${job.kind}.mp3`,bytes);
+}
+async function run(){
+  state.running=true;state.paused=false;el('start').disabled=true;el('pause').disabled=false;el('download').disabled=true;
+  while(state.queue.length&&state.running){
+    if(state.paused){await new Promise(resolve=>setTimeout(resolve,300));continue}
+    const job=state.queue.shift();el('current').textContent=job.text;el('status').textContent=`מייצר ${job.kind==='word'?'מילה':'משפט'} · ${state.processed+1} מתוך ${state.processed+state.queue.length+1}`;
+    try{await requestAudio(job)}catch(error){state.failures.push({...job,error:error.message});el('errors').textContent=state.failures.map(x=>`${x.id}-${x.kind}: ${x.error}`).join('\n')}
+    state.processed++;setProgress();
+  }
+  if(!state.running)return;
+  state.running=false;el('pause').disabled=true;el('download').disabled=!state.files.size;el('current').textContent='';
+  el('status').textContent=state.failures.length?`הסתיים עם ${state.failures.length} קבצים שנכשלו. אפשר להוריד את שאר הקבצים.`:'הכול מוכן. אפשר להוריד את קובץ ה־ZIP.';updateCounts();
+}
+el('start').addEventListener('click',()=>{
+  if(state.processed&&!confirm('להתחיל יצירה חדשה? הקבצים שנוצרו בזיכרון יימחקו.'))return;
+  state.files.clear();state.failures=[];state.processed=0;el('errors').textContent='';
+  const selected=new Set([...document.querySelectorAll('input[data-sheet]:checked')].map(x=>x.dataset.sheet));
+  state.queue=state.items.filter(x=>selected.has(x.sheet)).flatMap(x=>[{...x,kind:'word',text:x.word},...(x.sentence?[{...x,kind:'sentence',text:x.sentence}]:[])]);setProgress();run();
+});
+el('pause').addEventListener('click',()=>{state.paused=!state.paused;el('pause').textContent=state.paused?'המשך':'השהיה';el('status').textContent=state.paused?'היצירה מושהית':el('status').textContent});
+el('download').addEventListener('click',async()=>{
+  el('download').disabled=true;el('status').textContent='אורז את קובצי האודיו…';
+  const zip=new JSZip();for(const [name,bytes] of state.files)zip.file(name,bytes);zip.file('audio/manifest.json',JSON.stringify({createdAt:new Date().toISOString(),files:[...state.files.keys()],failures:state.failures},null,2));
+  const blob=await zip.generateAsync({type:'blob',compression:'STORE'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='shway-shway-audio.zip';a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);el('status').textContent='ה־ZIP הורד. שמור אותו לפני סגירת הלשונית.';el('download').disabled=false;
+});
+load();
+</script>
+</body>
+</html>
