@@ -27,7 +27,11 @@
   </header>
 
   <section id="homePage" class="home-page">
-    <div><h2 class="home-heading">השיעורים שלי</h2><p class="muted" style="margin:0">בחר שיעור כדי לראות את המילים ולהתחיל סט</p></div>
+    <div class="continue-learning">
+      <button id="continueLearningButton" class="primary continue-learning-button" type="button">המשך ללמוד</button>
+      <p id="continueLearningMeta" class="muted continue-learning-meta"></p>
+    </div>
+    <h2 class="home-heading">השיעורים שלי</h2>
     <div id="lessonList" class="lesson-list"></div>
     <button id="allLessonsButton" class="primary all-lessons-button" type="button">כל המילים והתרגול המשולב</button>
   </section>
@@ -96,7 +100,7 @@
     <button id="shuffleButton" class="menu-row active" type="button"><span>ערבוב מילים</span><strong class="menu-icon">🔀</strong></button>
   </div>
   <button id="resetProgress" class="menu-row danger" type="button"><span>איפוס התקדמות</span><strong>↻</strong></button>
-  <p id="appVersion" class="app-version">Shway Shway v19.0</p>
+  <p id="appVersion" class="app-version">Shway Shway v19.1</p>
 </aside>
 
 <script src="./app.js" defer></script>
