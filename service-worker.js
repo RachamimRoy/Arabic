@@ -1,4 +1,4 @@
-const CACHE_NAME='shway-shway-v18.3';
+const CACHE_NAME='shway-shway-v18.4';
 const APP_SHELL=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png','./upload/image(43).png','./upload/image(44).png'];
 
 self.addEventListener('install',event=>{
