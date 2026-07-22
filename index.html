@@ -17,7 +17,7 @@
 
 <link rel="stylesheet" href="./styles.css">
 </head>
-<body>
+<body class="app-booting">
 <main class="wrap">
   <header class="top">
     <button id="menuButton" class="icon-button" type="button" title="תפריט">☰</button>
@@ -27,6 +27,10 @@
   </header>
 
   <section id="homePage" class="home-page">
+    <div id="homeLoading" class="home-loading" role="status" aria-live="polite">
+      <span class="home-loading-spinner" aria-hidden="true"></span>
+      <span>טוען את השיעורים…</span>
+    </div>
     <div class="continue-learning">
       <button id="continueLearningButton" class="primary continue-learning-button" type="button">המשך ללמוד</button>
       <p id="continueLearningMeta" class="muted continue-learning-meta"></p>
@@ -100,7 +104,7 @@
     <button id="shuffleButton" class="menu-row active" type="button"><span>ערבוב מילים</span><strong class="menu-icon">🔀</strong></button>
   </div>
   <button id="resetProgress" class="menu-row danger" type="button"><span>איפוס התקדמות</span><strong>↻</strong></button>
-  <p id="appVersion" class="app-version">Shway Shway v19.2</p>
+  <p id="appVersion" class="app-version">Shway Shway v19.3</p>
 </aside>
 
 <script src="./app.js" defer></script>
