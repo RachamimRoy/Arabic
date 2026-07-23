@@ -77,7 +77,10 @@
   <section id="summaryPage" class="card" hidden>
     <div class="summary-head"><div><p class="muted" style="margin:0 0 5px">הסט הסתיים</p><h2 style="margin:0">סיכום הסט</h2></div></div>
     <p id="summaryStats" class="summary-stats"></p><div id="summaryList" class="summary-list"></div>
-    <button id="continueButton" class="primary" type="button" style="width:100%;margin-top:22px">המשך לסט הבא</button>
+    <div id="summaryActions" class="summary-actions">
+      <button id="retryMistakesButton" class="nav-button summary-retry" type="button">חזרה על הטעויות</button>
+      <button id="continueButton" class="primary summary-continue" type="button">לסט הבא</button>
+    </div>
   </section>
 
   <section id="listPage" class="card" hidden>
@@ -101,10 +104,17 @@
   <div class="drawer-head"><h2 style="margin:0">הגדרות</h2><button id="closeSettings" class="icon-button" type="button">✕</button></div>
   <div class="user-box"><div class="muted" style="font-size:12px;margin-bottom:7px">משתמש</div><div id="googleSignIn" class="google-login"></div><div id="googleProfile" class="google-profile" hidden><img id="googlePicture" alt=""><span class="google-profile-copy"><strong id="googleName"></strong><small id="googleEmail" class="muted"></small></span></div><button id="googleSignOut" class="google-signout" type="button" hidden>התנתקות מחשבון Google</button><div id="recoveryTools"><div class="muted" style="font-size:11px;margin-top:5px">קוד שחזור חלופי</div><div id="userCode" class="cloud-code"></div><div class="cloud-tools"><button id="copyUserCode" type="button">העתקת קוד</button><button id="restoreUserCode" type="button">שחזור</button></div></div><div id="cloudStatus" class="cloud-status">מתחבר לשמירה בענן…</div></div>
   <div class="menu-list">
+    <div class="direction-setting">
+      <span class="direction-label">כיוון התרגול</span>
+      <div class="direction-toggle" role="group" aria-label="כיוון התרגול">
+        <button id="arabicToHebrew" class="direction-option active" type="button">ערבית ← עברית</button>
+        <button id="hebrewToArabic" class="direction-option" type="button">עברית ← ערבית</button>
+      </div>
+    </div>
     <button id="shuffleButton" class="menu-row active" type="button"><span>ערבוב מילים</span><strong class="menu-icon">🔀</strong></button>
   </div>
   <button id="resetProgress" class="menu-row danger" type="button"><span>איפוס התקדמות</span><strong>↻</strong></button>
-  <p id="appVersion" class="app-version">Shway Shway v19.3</p>
+  <p id="appVersion" class="app-version">Shway Shway v19.6</p>
 </aside>
 
 <script src="./app.js" defer></script>
