@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#1cb0f6">
+<meta name="theme-color" content="#08a7fe">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Shway Shway">
+<meta name="apple-mobile-web-app-title" content="قوائم">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icons/icon-192.png" sizes="192x192">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
-<title>Shway Shway</title>
+<title>قوائم</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 
 
@@ -20,10 +20,10 @@
 <body class="app-booting">
 <main class="wrap">
   <header class="top">
-    <button id="menuButton" class="icon-button" type="button" title="תפריט">☰</button>
-    <button id="settingsButton" class="icon-button" type="button" title="הגדרות" aria-label="הגדרות">⚙</button>
-    <button id="headerHomeButton" class="icon-button header-home" type="button" title="חזרה למסך הבית" aria-label="חזרה למסך הבית" hidden>‹</button>
-    <button id="listBack" class="icon-button header-home" type="button" title="חזרה" aria-label="חזרה" hidden>‹</button>
+    <button id="menuButton" class="icon-button" type="button" title="תפריט" aria-label="תפריט"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"/></svg></button>
+    <button id="settingsButton" class="icon-button" type="button" title="הגדרות" aria-label="הגדרות"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3.5v2M12 18.5v2M3.5 12h2M18.5 12h2M6 6l1.5 1.5M16.5 16.5 18 18M18 6l-1.5 1.5M7.5 16.5 6 18"/></svg></button>
+    <button id="headerHomeButton" class="icon-button header-home" type="button" title="חזרה למסך הבית" aria-label="חזרה למסך הבית" hidden><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+    <button id="listBack" class="icon-button header-home" type="button" title="חזרה" aria-label="חזרה" hidden><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
   </header>
 
   <section id="homePage" class="home-page">
@@ -59,15 +59,15 @@
   <section id="quizPage" hidden>
     <div id="sessionProgress" class="session-progress"><span>טוען…</span></div>
     <div class="word-card-viewport"><div id="wordCard" class="card word-card">
-      <div id="successPop" class="success-pop" hidden><div class="success-check">✓</div></div>
+      <div id="successPop" class="success-pop" hidden><div class="success-check"><svg class="status-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg></div></div>
       <button id="quizAudio" class="audio-button" type="button" title="השמעת המילה והמשפט" aria-label="השמעת המילה ואז המשפט"></button>
       <div class="word-content"><div class="word-line"><h2 id="arabicWord" class="word"></h2><span id="wordTranslit" class="translit"></span></div>
       <div id="meta" class="meta-tags"></div>
       <div class="example"><p id="arabicSentence" class="sentence"></p></div></div>
       <form id="form"><input id="word" aria-label="תרגום המילה" placeholder="תרגום המילה" autocomplete="off"><button id="checkButton" class="check" type="button">בדיקה</button><span id="keyboardSpacer" class="keyboard-spacer" aria-hidden="true"></span></form>
       <section id="feedback" class="feedback" hidden>
-        <div id="wrongAnswerBox" class="answer-state wrong-answer"><span class="answer-icon">×</span><div class="answer-content"><p id="mine"></p></div></div>
-        <div class="answer-state correct-answer"><span class="answer-icon">✓</span><div class="answer-content"><small>התשובה הנכונה</small><p id="correct"></p><p id="correctSentence" class="sentence-translation"></p></div></div>
+        <div id="wrongAnswerBox" class="answer-state wrong-answer"><span class="answer-icon"><svg class="status-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></span><div class="answer-content"><p id="mine"></p></div></div>
+        <div class="answer-state correct-answer"><span class="answer-icon"><svg class="status-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg></span><div class="answer-content"><small>התשובה הנכונה</small><p id="correct"></p><p id="correctSentence" class="sentence-translation"></p></div></div>
         <p id="retryNotice" class="retry-notice">נוסף לרשימת המילים לחזרה</p>
       </section>
     </div></div>
@@ -90,7 +90,7 @@
 
 <div id="drawerOverlay" class="drawer-overlay" hidden></div>
 <aside id="drawer" class="drawer" hidden>
-  <div class="drawer-head"><h2 style="margin:0">תפריט</h2><button id="closeMenu" class="icon-button" type="button">✕</button></div>
+  <div class="drawer-head"><h2 style="margin:0">תפריט</h2><button id="closeMenu" class="icon-button" type="button" aria-label="סגירת התפריט"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
   <div class="menu-list">
     <button id="homeButton" class="menu-row" type="button"><span>מסך הבית</span><strong>⌂</strong></button>
     <button class="menu-row" data-list="all"><span>כל המילים</span><strong id="totalCount">0</strong></button>
@@ -101,21 +101,21 @@
 </aside>
 
 <aside id="settingsDrawer" class="drawer settings-drawer" hidden>
-  <div class="drawer-head"><h2 style="margin:0">הגדרות</h2><button id="closeSettings" class="icon-button" type="button">✕</button></div>
-  <div class="user-box"><div class="muted" style="font-size:12px;margin-bottom:7px">משתמש</div><div id="googleSignIn" class="google-login"></div><div id="googleProfile" class="google-profile" hidden><img id="googlePicture" alt=""><span class="google-profile-copy"><strong id="googleName"></strong><small id="googleEmail" class="muted"></small></span></div><button id="googleSignOut" class="google-signout" type="button" hidden>התנתקות מחשבון Google</button><div id="recoveryTools"><div class="muted" style="font-size:11px;margin-top:5px">קוד שחזור חלופי</div><div id="userCode" class="cloud-code"></div><div class="cloud-tools"><button id="copyUserCode" type="button">העתקת קוד</button><button id="restoreUserCode" type="button">שחזור</button></div></div><div id="cloudStatus" class="cloud-status">מתחבר לשמירה בענן…</div></div>
+  <div class="drawer-head"><h2 style="margin:0">הגדרות</h2><button id="closeSettings" class="icon-button" type="button" aria-label="סגירת ההגדרות"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+  <div class="user-box"><div id="googleSignIn" class="google-login"></div><div id="googleProfile" class="google-profile" hidden><img id="googlePicture" alt=""><span class="google-profile-copy"><strong id="googleName"></strong><small id="googleEmail" class="muted"></small></span></div><button id="googleSignOut" class="google-signout" type="button" hidden>התנתקות מחשבון Google</button><div id="recoveryTools" hidden><div id="userCode"></div><button id="copyUserCode" type="button">העתקת קוד</button><button id="restoreUserCode" type="button">שחזור</button></div><div id="cloudStatus" class="cloud-status">מתחבר לשמירה בענן…</div></div>
   <div class="menu-list">
     <div class="direction-setting">
       <span class="direction-label">כיוון התרגול</span>
-      <button id="directionToggleButton" class="direction-toggle-button" type="button" aria-label="החלפת כיוון התרגול">עברית &lt; ערבית</button>
+      <button id="directionToggleButton" class="setting-control direction-control" type="button" aria-label="החלפת כיוון התרגול"></button>
     </div>
     <div class="direction-setting">
       <span class="direction-label">ניגון אוטומטי</span>
-      <button id="autoPlayButton" class="direction-toggle-button active" type="button" aria-label="ניגון אוטומטי: פעיל" aria-pressed="true">ON</button>
+      <button id="autoPlayButton" class="setting-control active" type="button" aria-label="ניגון אוטומטי: פעיל" aria-pressed="true"><svg class="setting-icon" viewBox="0 0 28 24" aria-hidden="true"><path d="M4 9h5l5-4v14l-5-4H4zM18 8c1.6 1.3 1.6 6.7 0 8M21 5c3.2 2.7 3.2 11.3 0 14"/></svg></button>
     </div>
-    <button id="shuffleButton" class="menu-row active" type="button"><span>ערבוב מילים</span><strong class="menu-icon">🔀</strong></button>
+    <button id="shuffleButton" class="menu-row setting-row active" type="button"><span>ערבוב מילים</span><strong class="menu-icon"></strong></button>
   </div>
-  <button id="resetProgress" class="menu-row danger" type="button"><span>איפוס התקדמות</span><strong>↻</strong></button>
-  <p id="appVersion" class="app-version">Shway Shway v19.9</p>
+  <button id="resetProgress" class="menu-row danger setting-row" type="button"><span>איפוס התקדמות</span><strong class="menu-icon"><svg class="setting-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 8a8 8 0 1 0 1 6M19 4v4h-4"/></svg></strong></button>
+  <p id="appVersion" class="app-version">قوائم v20.2</p>
 </aside>
 
 <script src="./app.js" defer></script>
