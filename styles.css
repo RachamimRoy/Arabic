@@ -119,3 +119,27 @@ body.menu-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}.drawer{
 /* Arabic display typography. Hebrew UI and transliteration keep their existing font. */
 .home-feature .word,.home-feature .sentence,.list-word,.list-sentence,.app-version,
 #quizPage:not(.reverse-direction) .word,#quizPage:not(.reverse-direction) .sentence{font-family:"Rubik",Arial,sans-serif}
+
+/* Interaction and card layout refinements v20.5 */
+html{-webkit-tap-highlight-color:transparent}
+button,a,[role="button"]{-webkit-tap-highlight-color:transparent}
+button{touch-action:manipulation}
+.settings-icon{display:block;width:31px;height:31px;object-fit:contain}
+.header-home{padding:0}
+.header-home .ui-icon{transform:translateY(2px)}
+.word-content{padding-left:0}
+.word-line{padding-left:58px}
+@media(max-width:560px){.word-line{padding-left:48px}}
+
+.icon-button,.reset,.nav-button,.lesson-card,.dashboard-row,.menu-row,
+.cloud-tools button,.setting-control,.direction-option,.google-signout,
+.audio-button,.meta-tag{transition:transform .12s ease,box-shadow .12s ease,background-color .12s ease,opacity .12s ease}
+.lesson-card:active,.dashboard-row:active,.menu-row:active,.reset:active,
+.nav-button:not(:last-child):active,.cloud-tools button:active{
+  transform:translateY(2px);
+  box-shadow:0 0 0 var(--shadow);
+  background:var(--soft)
+}
+.direction-option:active{background:#eceff1;transform:scale(.97)}
+.google-signout:active{opacity:.55}
+.audio-button:active{background:var(--soft);transform:scale(.92)}
