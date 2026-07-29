@@ -160,6 +160,14 @@ by('copyUserCode').addEventListener('click',async()=>{try{await navigator.clipbo
 by('restoreUserCode').addEventListener('click',()=>{const code=(prompt('הדבק את קוד השחזור שלך:')||'').trim().toLowerCase();if(!code)return;if(!/^[a-f0-9]{32}$/.test(code)){alert('קוד השחזור אינו תקין');return}if(code===userCode)return;if(!confirm('לטעון את ההתקדמות המשויכת לקוד הזה?'))return;localStorage.setItem(USER_CODE_KEY,code);localStorage.removeItem(STORAGE_KEY);location.reload()});
 by('googleSignOut').addEventListener('click',signOutGoogle);
 by('settingsButton').addEventListener('click',openSettings);
+document.querySelectorAll('.settings-drawer .direction-setting').forEach(row=>{
+  const control=row.querySelector('.setting-control');
+  if(!control)return;
+  row.addEventListener('click',event=>{
+    if(event.target.closest('.setting-control'))return;
+    control.click();
+  });
+});
 by('closeSettings').addEventListener('click',closeSettings);
 by('drawerOverlay').addEventListener('click',closeSettings);
 

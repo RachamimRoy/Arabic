@@ -107,6 +107,15 @@ body.menu-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}.drawer{
 .result-icon.is-correct{background:var(--green);box-shadow:0 4px 0 var(--green-shadow)}
 .result-icon.is-wrong{background:var(--red);box-shadow:0 4px 0 var(--red-shadow)}
 .summary-row-content{flex:1;min-width:0}
+
+/* Hebrew UI typography and full-width list copy v20.7 */
+body{font-family:"Fredoka",Arial,sans-serif}
+button,input,textarea,select{font-family:inherit}
+.direction-control span:last-child{font-family:"Rubik",Arial,sans-serif}
+.word-row{display:block}
+.list-row-content{width:100%}
+.list-audio{position:absolute;top:12px;left:12px;margin:0}
+.word-row .list-line{padding-left:52px}
 .summary-row-result{flex:0 0 auto}
 .summary-continue{box-shadow:0 4px 0 var(--blue-shadow)}
 .progress-segment.correct,.progress-segment.correct.current,.lesson-progress .known{background:var(--green)}
@@ -143,3 +152,57 @@ button{touch-action:manipulation}
 .direction-option:active{background:#eceff1;transform:scale(.97)}
 .google-signout:active{opacity:.55}
 .audio-button:active{background:var(--soft);transform:scale(.92)}
+
+/* Menu/settings rows and press feedback v20.6 */
+.drawer .menu-list{gap:0}
+.drawer .menu-row,
+.settings-drawer .direction-setting,
+.danger.menu-row{
+  position:relative;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  background:transparent
+}
+.drawer .menu-list>:not(:last-child)::after,
+.settings-drawer .menu-list>:last-child::after{
+  content:"";
+  position:absolute;
+  right:14px;
+  left:14px;
+  bottom:0;
+  height:2px;
+  border-radius:999px;
+  background:var(--line);
+  pointer-events:none
+}
+.settings-drawer .direction-setting{cursor:pointer}
+.menu-row:active,
+.settings-drawer .menu-row:active,
+.settings-drawer .direction-setting:active,
+.danger.menu-row:active{
+  transform:none;
+  box-shadow:none;
+  background:transparent
+}
+.setting-control:active,
+.settings-drawer .direction-setting:active .setting-control{
+  transform:translateY(2px)
+}
+.setting-control:active{box-shadow:0 2px 0 #adb1b4}
+.setting-control.active:active,
+.direction-control:active,
+.settings-drawer .direction-setting:active .setting-control.active,
+.settings-drawer .direction-setting:active .direction-control{
+  box-shadow:0 2px 0 var(--green-shadow)
+}
+.settings-drawer .menu-row:active .menu-icon{
+  transform:translateY(2px);
+  box-shadow:0 2px 0 #adb1b4
+}
+.settings-drawer .menu-row.active:active .menu-icon{
+  box-shadow:0 2px 0 var(--green-shadow)
+}
+.settings-drawer .danger.menu-row:active .menu-icon{
+  box-shadow:0 2px 0 var(--red-shadow)
+}
