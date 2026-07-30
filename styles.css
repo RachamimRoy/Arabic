@@ -116,30 +116,37 @@ body.menu-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}.drawer{
 .result-icon.is-wrong{background:var(--red);box-shadow:0 4px 0 var(--red-shadow)}
 .summary-row-content{flex:1;min-width:0}
 
-/* Open summary layout and animated all-lessons progress v20.9 */
+/* Summary layout, shared progress language and animated counts v20.10 */
 .summary-page{width:100%;padding:2px 2px 8px}
 .summary-page .summary-head{margin:0 4px 8px}
 .summary-title{margin:0;font-size:30px;line-height:1.15}
 .summary-message{max-width:580px;margin:8px 0 0;color:var(--muted);font-size:17px;line-height:1.4}
-.summary-page .summary-stats{margin:0 4px 18px;font-size:17px}
-.summary-overall-progress{margin:0 4px 24px}
-.summary-progress-copy{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:8px;font-size:14px;color:var(--muted)}
-.summary-progress-copy strong{color:var(--ink);font-size:14px;white-space:nowrap}
-.summary-progress-track{position:relative;height:13px;border-radius:999px;background:var(--line);overflow:hidden}
-.summary-progress-track span{position:absolute;top:0;bottom:0}
-#summaryProgressBefore{right:0;background:var(--green)}
-#summaryProgressGain{background:#63dca7;transition:width .85s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 0 2px rgba(255,255,255,.35) inset}
-.summary-page .summary-list{gap:12px}
-.summary-page .summary-row{padding:16px 18px}
+.summary-overall-progress{margin:24px 0 20px}
+.summary-progress-track{display:flex;direction:ltr;width:100%;height:40px;border-radius:999px;background:var(--line);overflow:hidden}
+.summary-progress-segment{display:grid;place-items:center;min-width:38px;height:100%;flex:0 1 0;transition:flex-basis .95s cubic-bezier(.2,.8,.2,1);overflow:hidden}
+.summary-progress-segment b{color:#fff;font-size:17px;font-weight:600;line-height:1;text-shadow:0 1px 1px rgba(0,0,0,.12);direction:ltr}
+.summary-progress-segment.is-unseen{background:#e8e8e8}
+.summary-progress-segment.is-unseen b{color:#626262;text-shadow:none}
+.summary-progress-segment.is-red{background:var(--red)}
+.summary-progress-segment.is-orange{background:var(--orange)}
+.summary-progress-segment.is-known{background:var(--green)}
+.summary-progress-segment.is-empty{min-width:0}
+.summary-progress-segment.is-empty b{visibility:hidden}
+.summary-page .summary-stats{margin:0 4px 14px;font-size:17px}
+.summary-page .summary-list{gap:0}
+.summary-page .summary-row{position:relative;padding:22px 12px 24px;border:0;border-radius:0;background:transparent;box-shadow:none}
+.summary-page .summary-row:not(:last-child)::after{content:"";position:absolute;right:0;bottom:0;width:100%;height:3px;border-radius:999px;background:var(--line)}
 .summary-page .summary-actions{margin-left:4px;margin-right:4px}
 @media(max-width:560px){
   .summary-page{margin-left:-4px;margin-right:-4px;width:calc(100% + 8px)}
   .summary-title{font-size:27px}
   .summary-message{font-size:16px}
-  .summary-page .summary-row{padding:13px 12px}
-  .summary-progress-copy{align-items:flex-start;flex-direction:column;gap:2px}
+  .summary-progress-track{height:40px}
+  .summary-progress-segment{min-width:34px}
+  .summary-progress-segment.is-empty{min-width:0}
+  .summary-page .summary-row{padding:20px 10px 23px}
 }
-@media(prefers-reduced-motion:reduce){#summaryProgressGain{transition-duration:.01ms!important}}
+@media(prefers-reduced-motion:reduce){.summary-progress-segment{transition-duration:.01ms!important}}
 
 /* Hebrew UI typography and full-width list copy v20.7 */
 body{font-family:"Fredoka",Arial,sans-serif}

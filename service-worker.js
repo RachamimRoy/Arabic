@@ -1,4 +1,4 @@
-const CACHE_NAME='qawaem-v20.9';
+const CACHE_NAME='qawaem-v20.10';
 const APP_SHELL=['./','./index.html','./styles.css','./app.js','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-512.png','./icons/settings.png','./upload/image(43).png','./upload/image(44).png','./fonts/fredoka-hebrew-400-normal.woff2','./fonts/fredoka-hebrew-500-normal.woff2','./fonts/fredoka-hebrew-600-normal.woff2','./fonts/fredoka-latin-400-normal.woff2','./fonts/fredoka-latin-500-normal.woff2','./fonts/fredoka-latin-600-normal.woff2','./fonts/rubik-arabic-400-normal.woff2','./fonts/rubik-arabic-600-normal.woff2'];
 
 self.addEventListener('install',event=>{

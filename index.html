@@ -74,11 +74,15 @@
 
   <section id="summaryPage" class="summary-page" hidden>
     <div class="summary-head"><div><h2 id="summaryTitle" class="summary-title"></h2><p id="summaryMessage" class="summary-message"></p></div></div>
-    <p id="summaryStats" class="summary-stats"></p>
     <div class="summary-overall-progress" aria-label="התקדמות כללית בכל השיעורים">
-      <div class="summary-progress-copy"><span>ההתקדמות שלך בכל השיעורים</span><strong id="summaryProgressCount"></strong></div>
-      <div class="summary-progress-track"><span id="summaryProgressBefore"></span><span id="summaryProgressGain"></span></div>
+      <div id="summaryProgressTrack" class="summary-progress-track">
+        <span id="summaryProgressUnseen" class="summary-progress-segment is-unseen"><b>0</b></span>
+        <span id="summaryProgressRed" class="summary-progress-segment is-red"><b>0</b></span>
+        <span id="summaryProgressOrange" class="summary-progress-segment is-orange"><b>0</b></span>
+        <span id="summaryProgressKnown" class="summary-progress-segment is-known"><b>0</b></span>
+      </div>
     </div>
+    <p id="summaryStats" class="summary-stats"></p>
     <div id="summaryList" class="summary-list"></div>
     <div id="summaryActions" class="summary-actions">
       <button id="retryMistakesButton" class="nav-button summary-retry" type="button">חזרה על הטעויות</button>
@@ -118,7 +122,7 @@
     <button id="shuffleButton" class="menu-row setting-row active" type="button"><span>ערבוב מילים</span><strong class="menu-icon"></strong></button>
   </div>
   <button id="resetProgress" class="menu-row danger setting-row" type="button"><span>איפוס התקדמות</span><strong class="menu-icon"><svg class="setting-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 8a8 8 0 1 0 1 6M19 4v4h-4"/></svg></strong></button>
-  <p id="appVersion" class="app-version">قوائم v20.9</p>
+  <p id="appVersion" class="app-version">قوائم v20.10</p>
 </aside>
 
 <script src="./app.js" defer></script>
