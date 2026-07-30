@@ -13,9 +13,6 @@
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
 <title>قوائم</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./styles.css">
 </head>
 <body class="app-booting">
@@ -75,9 +72,14 @@
     <div class="navigation"><button id="previousButton" class="nav-button" type="button">מילה קודמת</button><button id="nextButton" class="nav-button" type="button">דילוג</button></div>
   </section>
 
-  <section id="summaryPage" class="card" hidden>
-    <div class="summary-head"><div><p class="muted" style="margin:0 0 5px">הסט הסתיים</p><h2 style="margin:0">סיכום הסט</h2></div></div>
-    <p id="summaryStats" class="summary-stats"></p><div id="summaryList" class="summary-list"></div>
+  <section id="summaryPage" class="summary-page" hidden>
+    <div class="summary-head"><div><h2 id="summaryTitle" class="summary-title"></h2><p id="summaryMessage" class="summary-message"></p></div></div>
+    <p id="summaryStats" class="summary-stats"></p>
+    <div class="summary-overall-progress" aria-label="התקדמות כללית בכל השיעורים">
+      <div class="summary-progress-copy"><span>ההתקדמות שלך בכל השיעורים</span><strong id="summaryProgressCount"></strong></div>
+      <div class="summary-progress-track"><span id="summaryProgressBefore"></span><span id="summaryProgressGain"></span></div>
+    </div>
+    <div id="summaryList" class="summary-list"></div>
     <div id="summaryActions" class="summary-actions">
       <button id="retryMistakesButton" class="nav-button summary-retry" type="button">חזרה על הטעויות</button>
       <button id="continueButton" class="nav-button summary-continue" type="button">לסט הבא</button>
@@ -116,7 +118,7 @@
     <button id="shuffleButton" class="menu-row setting-row active" type="button"><span>ערבוב מילים</span><strong class="menu-icon"></strong></button>
   </div>
   <button id="resetProgress" class="menu-row danger setting-row" type="button"><span>איפוס התקדמות</span><strong class="menu-icon"><svg class="setting-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 8a8 8 0 1 0 1 6M19 4v4h-4"/></svg></strong></button>
-  <p id="appVersion" class="app-version">قوائم v20.6</p>
+  <p id="appVersion" class="app-version">قوائم v20.9</p>
 </aside>
 
 <script src="./app.js" defer></script>
